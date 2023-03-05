@@ -1,8 +1,8 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import { IMessageResponse } from "./interfaces/IMessageResponse.js";
-import * as middleware from "./middleware";
+import * as middleware from "./middleware/_middlewares.js";
+import { router } from "./resources/router.js";
 
 // Instantiate the Express server
 const server = express();
@@ -13,16 +13,10 @@ server.use(helmet());
 server.use(express.json()); // Parse requests to json
 server.use(express.urlencoded({ extended: false })); // Parse URL Encoded data
 
-// Setup simple get route
-server.get<{}, IMessageResponse>("/", (req, res) => {
-  res.json({
-    message: "Hello World!",
-  });
-});
+// Register and use the main resource router
+server.use("/api/v1", router);
 
-// TODO: Add resource routers here from the "api" directory
-
-// Handle errors
+// Handle errors in Request / Response
 server.use(middleware.notFound);
 server.use(middleware.errorHandler);
 
