@@ -4,8 +4,8 @@
  * which can be consumed by the server module
  */
 
-import express from "express";
-import { IMessageResponse } from "../interfaces/IMessageResponse.js";
+import { Router } from "express";
+import { itemsRouter } from "./items/items.routes.js";
 
 /**
  * The Router is responsible for accepting requests and sending responses
@@ -15,15 +15,9 @@ import { IMessageResponse } from "../interfaces/IMessageResponse.js";
  */
 
 // Setup the Express Router
-const router = express.Router();
+const router = Router();
 
-router.get<{}, IMessageResponse>("/", (req, res) => {
-  res.json({
-    message: "API - Hello!",
-  });
-});
-
-// TODO: Import resource routers HERE
-// router.use('/resource-endpoint', resource-router)
+// Import resource routers
+router.use("/items", itemsRouter);
 
 export { router };
