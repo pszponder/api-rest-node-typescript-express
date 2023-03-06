@@ -17,7 +17,7 @@ export function errorHandler(
   next: NextFunction,
 ) {
   // Set status code based on the response
-  const statusCode = res.statusCode ? res.statusCode : 500;
+  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   res.status(statusCode);
 
   // Set the response body json
