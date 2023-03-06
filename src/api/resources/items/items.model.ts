@@ -4,7 +4,7 @@ import * as z from "zod";
 const QUALITY = ["common", "uncommon", "rare", "legendary"] as const;
 
 // Define a validator for an Item object
-const Item = z.object({
+export const Item = z.object({
   name: z.string().min(1),
   quality: z.enum(QUALITY),
   value: z.number(),
