@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Item, ItemWithId } from "./items.model.js";
+import { Item, ItemQuality, ItemWithId } from "./items.model.js";
 
 // Define the initial items array
 const itemsArr: ItemWithId[] = [
@@ -90,7 +90,12 @@ class Items {
    * @param value optional: new item value
    * @returns updated item
    */
-  updateItemByIdAsync = (id: string, name?: string, value?: number) => {
+  updateItemByIdAsync = (
+    id: string,
+    name?: string,
+    quality?: ItemQuality,
+    value?: number,
+  ) => {
     return new Promise<ItemWithId>((resolve, reject) => {
       const itemToUpdateIdx = this.#items.findIndex(item => item.id === id);
 
@@ -99,9 +104,14 @@ class Items {
           this.#items[itemToUpdateIdx]!.name = name;
         }
 
+        if (quality) {
+          this.#items[itemToUpdateIdx]!.quality = quality;
+        }
+
         if (value) {
           this.#items[itemToUpdateIdx]!.value = value;
         }
+
         resolve(this.#items[itemToUpdateIdx]!);
       } else {
         reject(new Error(`Error updating item with id ${id}`));

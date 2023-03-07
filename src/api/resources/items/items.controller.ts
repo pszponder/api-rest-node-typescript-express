@@ -63,7 +63,7 @@ export async function getItemByIdAsync(
  * @access Public
  */
 export async function addItemAsync(
-  req: Request<{}, {}, ItemWithId>,
+  req: Request<{}, {}, Item>,
   res: Response<ItemWithId[]>,
   next: NextFunction,
 ) {
@@ -94,7 +94,7 @@ export async function addItemAsync(
  * @access Public
  */
 export async function updateItemByIdAsync(
-  req: Request<{ id: string }, {}, { name?: string; value?: number }>,
+  req: Request<{ id: string }, {}, Item>,
   res: Response<ItemWithId>,
   next: NextFunction,
 ) {
@@ -103,12 +103,13 @@ export async function updateItemByIdAsync(
     const itemId = req.params.id;
 
     // Extract values from request body
-    const { name, value } = req.body;
+    const { name, quality, value } = req.body;
 
     // Update the item with specific id
     const updatedItem = await itemsService.updateItemByIdAsync(
       itemId,
       name,
+      quality,
       value,
     );
 
