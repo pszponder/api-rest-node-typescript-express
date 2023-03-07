@@ -45,7 +45,7 @@ class Items {
       if (this.#items) {
         resolve(this.#items);
       } else {
-        reject("Unable to get retrieve items");
+        reject(new Error("Unable to get retrieve items"));
       }
     });
   };
@@ -57,11 +57,11 @@ class Items {
    */
   getItemByIdAsync = (id: string) => {
     return new Promise<ItemWithId>((resolve, reject) => {
-      const item = this.#items.find(item => item.id === id);
+      const item = this.#items.find(itm => itm.id === id);
       if (item) {
         resolve(item);
       } else {
-        reject(`Unable to retrieve item with id ${id}`);
+        reject(new Error(`Unable to retrieve item with id ${id}`));
       }
     });
   };
@@ -72,7 +72,7 @@ class Items {
    * @returns updated items array
    */
   addItemAsync = (item: Item) => {
-    return new Promise<ItemWithId[]>((resolve, reject) => {
+    return new Promise<ItemWithId[]>(resolve => {
       const uuid = randomUUID();
       const newItem: ItemWithId = {
         id: uuid,
@@ -104,7 +104,7 @@ class Items {
         }
         resolve(this.#items[itemToUpdateIdx]!);
       } else {
-        reject(`Error updating item with id ${id}`);
+        reject(new Error(`Error updating item with id ${id}`));
       }
     });
   };
@@ -123,7 +123,7 @@ class Items {
         this.#items = [...filtered];
         resolve(itemToRemove);
       } else {
-        reject(`Unable to find item with id ${id}`);
+        reject(new Error(`Unable to find item with id ${id}`));
       }
     });
   };
