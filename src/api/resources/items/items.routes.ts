@@ -1,4 +1,5 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+import { validateRequest } from "../../middleware/_middlewares.js";
 import {
   addItemAsync,
   deleteItemByIdAsync,
@@ -6,7 +7,7 @@ import {
   getItemByIdAsync,
   updateItemByIdAsync,
 } from "./items.controller.js";
-import { Item } from "./items.model.js";
+import { Item, ParamsWithId } from "./items.model.js";
 
 // Setup the Express Router
 const itemsRouter = Router();
@@ -14,12 +15,16 @@ const itemsRouter = Router();
 // Define Routes and corresponding HTTP Methods
 itemsRouter
   .route("/")
-  .get(await getAllItemsAsync)
-  .post(await addItemAsync);
+  .get(validateRequest({}), await getAllItemsAsync)
+  .post(validateRequest({ body: Item }), await addItemAsync);
+
 itemsRouter
   .route("/:id")
-  .get(await getItemByIdAsync)
-  .put(await updateItemByIdAsync)
-  .delete(await deleteItemByIdAsync);
+  .get(validateRequest({ params: ParamsWithId }), await getItemByIdAsync)
+  .put(
+    validateRequest({ params: ParamsWithId, body: Item }),
+    await updateItemByIdAsync,
+  )
+  .delete(validateRequest({ params: ParamsWithId }), await deleteItemByIdAsync);
 
 export { itemsRouter };
