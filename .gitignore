@@ -138,3 +138,7 @@ todos.md
 
 # Scratch Folder (for creating tests)
 src/_scratch/
+
+# Don't commit certs directory or any files related to certs / ssl
+certs/
+*.pem
