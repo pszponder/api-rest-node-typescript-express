@@ -45,7 +45,7 @@ export async function getItemByIdAsync(
 
     // Handle case when item is not found
     if (!item) {
-      res.status(400);
+      res.status(404);
       throw new Error(`Item with id ${itemId} not found.`);
     }
 
@@ -117,6 +117,7 @@ export async function updateItemByIdAsync(
     res.status(200).json(updatedItem);
   } catch (err) {
     // Pass error to next middleware (error handler)
+    res.status(404); // set the response to 404 since id cant be found
     next(err);
   }
 }
@@ -141,6 +142,7 @@ export async function deleteItemByIdAsync(
     res.status(200).json(deletedItem);
   } catch (err) {
     // Pass error to next middleware (error handler)
+    res.status(404); // set the response to 404 since id cant be found
     next(err);
   }
 }
