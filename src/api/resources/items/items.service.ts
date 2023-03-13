@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Item, ItemQuality, ItemWithId } from "./items.model.js";
 
 // Define the initial items array
-const itemsArr: ItemWithId[] = [
+export const itemsArr: ItemWithId[] = [
   {
     id: "615a0e18-415c-41ba-9c51-3b403deec651",
     name: "bronze sword",
