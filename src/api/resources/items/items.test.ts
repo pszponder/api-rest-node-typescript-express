@@ -1,3 +1,4 @@
+import exp from "node:constants";
 import request from "supertest";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { server as expressServer } from "../../server.js";
@@ -45,6 +46,20 @@ describe("GET /api/v1/items/:id", () => {
     expect(response.body.quality).toBe(foundItem?.quality);
     expect(response.body.value).toBe(foundItem?.value);
   });
+
+  it("responds with 404 not found error if id is not found", async () => {
+    // ARRANGE - Define testing environments & Values
+    const invalidItemId = "invalid-id-lkajsdf";
+    const endpoint = `${rootEndpoint}/${invalidItemId}`;
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .get(endpoint)
+      .set("Accept", "application/json");
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(404);
+  });
 });
 
 describe("POST /api/v1/items", () => {
@@ -75,6 +90,24 @@ describe("POST /api/v1/items", () => {
     expectTypeOf(responsePost.body).toEqualTypeOf<ItemWithId[]>; // Check the type of one of the items in the array of items returned
     expect(responsePost.body.length).toBe(responseGet.body.length + 1);
   });
+
+  it("responds with an error if the item is invalid", async () => {
+    // ARRANGE - Define testing environments & Values
+    const invalidItem = {
+      names: "sword",
+      quality: "ultra legendary",
+      value: "ten",
+    };
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .post(rootEndpoint)
+      .set("Accept", "application/json")
+      .send(invalidItem);
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(422);
+  });
 });
 
 describe("PUT /api/v1/items/:id", () => {
@@ -101,6 +134,58 @@ describe("PUT /api/v1/items/:id", () => {
     expect(response.body.name).toBe(updatedItem.name);
     expect(response.body.quality).toBe(updatedItem.quality);
     expect(response.body.value).toBe(updatedItem.value);
+  });
+
+  it("responds with a 404 not found error if the id does not exist", async () => {
+    // ARRANGE - Define testing environments & Values
+    const invalidItemId = "invalid-id-lkajsdf";
+    const endpoint = `${rootEndpoint}/${invalidItemId}`;
+    const updatedItem = {
+      name: "Poseidon's Spear",
+      quality: "common",
+      value: 100000,
+    };
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .put(endpoint)
+      .set("Accept", "application/json")
+      .send(updatedItem);
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(404);
+  });
+
+  it("responds with an error if body is not passed in", async () => {
+    // ARRANGE - Define testing environments & Values
+    const itemId = "bebaf5f9-2cbe-4c84-a472-4bd11dadec79";
+    const endpoint = `${rootEndpoint}/${itemId}`;
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .put(endpoint)
+      .set("Accept", "application/json");
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(422);
+  });
+
+  it("responds with an error if invalid body passed in", async () => {
+    // ARRANGE - Define testing environments & Values
+    const itemId = "bebaf5f9-2cbe-4c84-a472-4bd11dadec79";
+    const updatedItem = {
+      material: "obsidian",
+    };
+    const endpoint = `${rootEndpoint}/${itemId}`;
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .put(endpoint)
+      .set("Accept", "application/json")
+      .send(updatedItem);
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(422);
   });
 });
 
@@ -142,5 +227,19 @@ describe("DELETE /api/v1/items/:id", () => {
     expect(responseDelete.body.name).toBe(responseGetById.body.name);
     expect(responseDelete.body.quality).toBe(responseGetById.body.quality);
     expect(responseDelete.body.value).toBe(responseGetById.body.value);
+  });
+
+  it("responds with 404 not found error if invalid id passed in", async () => {
+    // ARRANGE - Define testing environments & Values
+    const invalidItemId = "invalid-item-id-asdfjlkjh";
+    const endpoint = `${rootEndpoint}/${invalidItemId}`;
+
+    // ACT - Run the code that is being tested
+    const response = await request(expressServer)
+      .delete(endpoint)
+      .set("Accept", "application/json");
+
+    // ASSERT - Evaluate result and compare to expected value
+    expect(response.status).toEqual(404);
   });
 });
