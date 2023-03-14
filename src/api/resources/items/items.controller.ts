@@ -43,15 +43,12 @@ export async function getItemByIdAsync(
     const itemId = req.params.id;
     const item = await itemsService.getItemByIdAsync(itemId);
 
-    // Handle case when item is not found
-    if (!item) {
-      res.status(404);
-      throw new Error(`Item with id ${itemId} not found.`);
-    }
-
     // Send the response
     res.status(200).json(item);
   } catch (err) {
+    // Pass error to next middleware (error handler)
+    res.status(404); // set the response to 404 since id cant be found
+
     // Pass error to next middleware (error handler)
     next(err);
   }
