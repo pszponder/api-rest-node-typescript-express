@@ -62,6 +62,102 @@ openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
 
 ## Project Structure & Overview
 
+Important Files / Directories
+
+```txt
+├── certs
+│   ├── cert.pem
+│   ├── csr.pem
+│   └── key.pem
+├── dist
+│   └── index.js
+└── src
+   ├── api
+   │   ├── interfaces
+   │   │   ├── IErrorResponse.ts
+   │   │   └── IMessageResponse.ts
+   │   ├── middleware
+   │   │   ├── errorHandler.middleware.ts
+   │   │   ├── _middlewares.ts
+   │   │   ├── notFound.middleware.ts
+   │   │   └── validateRequest.ts
+   │   ├── resources
+   │   │   ├── items
+   │   │   │   ├── items.controller.ts
+   │   │   │   ├── items.model.ts
+   │   │   │   ├── items.routes.ts
+   │   │   │   ├── items.service.ts
+   │   │   │   └── items.test.ts
+   │   │   └── router.ts
+   │   ├── server.test.ts
+   │   └── server.ts
+   ├── database
+   ├── index.ts
+   └── utils
+       └── parseEnvVars.ts
+```
+
+`index.ts`
+
+- This is the entry point of the program
+- `index.ts` imports the express app and wraps it with an HTTPS server
+- The HTTPS server then starts to listen for requests to the specified port
+
+`utils` -- Contains utility / helper files
+
+`database`
+
+- Contains logic required to connect to database
+- May contain database models
+- May contain services to communicate with and perform CRUD operations on Database
+
+`api` -- Contains all logic associated with the Express API
+
+`server.ts`
+
+- This is the entry point for the Express Server
+- Instantiates and exports the Express server
+- All Express middleware is declared
+- Registers the root router `resources/router.ts` and specifies a root api url (ex. `/api/v1`/)
+  - All resource endpoints will start with this root url
+- Additional middleware for handling errors
+
+`middleware` -- Contains custom Express middleware used by Express
+
+`resources`
+
+- Each sub-directory of the `resources` directory:
+  - Represents a "resource" used by the API
+  - Contains at a minimum:
+    - Resource Controller
+      - Contains request handlers for specific routes related to the resource
+      - Accepts request and response from router
+      - Uses service to perform CRUD operations on DB
+    - Resource Routes
+      - All routes are exported to a router which in turn is registered in `server.ts` as a type of middleware
+      - Forwards requests to specified controller handler method
+    - Resource Models
+      - Typescript types and interfaces used by the other files in the particular resource sub-directory
+    - Resource Service (communicates with DB)
+      - Typically, the responsibility of the service is to serve as the direct interface between the API (specifically the controller / request handlers) and the DataBase
+      - In this simplified example, the service contains a class which contains a list (represents the database data) and methods to manipulate that list (represents methods to perform CRUD operations on the database data)
+
+`router.ts`
+
+- Instantiates a single root router
+- Imports and registers all resource specific routes
+- Exports the root router which is registered in `server.ts` and used by the Express Router with a root url
+
+`items`
+
+- This is an example sub-directory contained under the `resources` directory
+- Represents a resource exposed by the API
+- Contains:
+  - Controller (request handlers)
+  - Model (models, TS Interfaces and TS Types)
+  - Routes (HTTP/HTTPS endpoints for the resource)
+  - Service (typically used as interface between DataBase and Controller)
+
 # Notes
 
 ## Scripts:
